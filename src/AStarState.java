@@ -41,13 +41,15 @@ public class AStarState
     public Waypoint getMinOpenWaypoint()
     {
         // TODO:  Implement.
-        Waypoint maxValue = null;
+        float minCost = -1;
+        Waypoint minValue = null;
         for (Waypoint value : opened.values()) {
-            if (value.getTotalCost() > maxValue.getTotalCost()) {
-                maxValue = value;
+            if (value.getTotalCost() < minCost || minCost == -1) {
+                minValue = value;
+                minCost = value.getTotalCost();
             }
         }
-        return maxValue;
+        return minValue;
 
     }
 
@@ -63,13 +65,14 @@ public class AStarState
     public boolean addOpenWaypoint(Waypoint newWP)
     {
         // TODO:  Implement.
-        if (opened.containsKey(newWP.getLocation()) &&
-                newWP.getPreviousCost() < opened.get(newWP.getLocation()).getPreviousCost()) {
-            opened.put(newWP.getLocation(), newWP);
-            return true;
-
+        if (opened.containsKey(newWP.getLocation())) {
+            if (newWP.getPreviousCost() < opened.get(newWP.getLocation()).getPreviousCost()) {
+                opened.put(newWP.getLocation(), newWP);
+                return true;
+            }
         } else {
             opened.put(newWP.getLocation(), newWP);
+            return true;
         }
         return false;
     }
@@ -90,6 +93,8 @@ public class AStarState
     public void closeWaypoint(Location loc)
     {
         // TODO:  Implement.
+        closed.put(loc, opened.get(loc));
+        opened.remove(loc);
     }
 
     /**
@@ -99,6 +104,6 @@ public class AStarState
     public boolean isLocationClosed(Location loc)
     {
         // TODO:  Implement.
-        return false;
+        return closed.containsKey(loc);
     }
 }
